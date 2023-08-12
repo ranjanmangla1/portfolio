@@ -23,10 +23,103 @@
     <link rel="stylesheet" href="assets/css/Navbar-Right-Links-icons.css">
     <link rel="stylesheet" href="assets/css/styles.css">
     <style>
+        body.dark-mode {
+            background: black; /* Dark background color */
+            color: #fff; /* Light text color */
+        }
+
+        nav.dark-mode {
+            color: #fff;
+        }
+        
+        a.dark-mode {
+            color: #fff;
+        }
+
+        .light-mode {
+            background: #e4e4e4;
+         }
+
+        /* #nginx {
+            filter: invert(1);
+        } */
+
+        #preloader {
+            background-color: #e4e4e4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100vw;
+            height: 100vh;
+            position: fixed; /* Make the preloader cover the whole viewport */
+            top: 0;
+            left: 0;
+            z-index: 9999; /* Put it above other content */
+            opacity: 1; /* Initially visible */
+            transition: opacity 0.5s ease-in-out; /* Smooth opacity transition */
+        }
+
+        .section-scroll {
+            /* min-height: 100vh; */
+            /* display: flex; */
+            /* justify-content: center;
+            align-items: center;
+            font-size: 2em; */
+        }
+
+        .hero-section {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        /* Light Mode Tooltip Styles */
+        .light-mode [data-bs-tooltip].tooltip::before {
+            border-top-color: black; /* Set the desired tooltip border color for light mode */
+            background-color: white; /* Set the background color for light mode */
+            color: black; /* Set the text color for light mode */
+        }
+
+        /* Dark Mode Tooltip Styles */
+        .dark-mode [data-bs-tooltip].tooltip::before {
+            border-top-color: white; /* Set the desired tooltip border color for dark mode */
+            background-color: black; /* Set the background color for dark mode */
+            color: white; /* Set the text color for dark mode */
+        }
+
+        .timeline-centered .timeline-entry .timeline-entry-inner .timeline-label.black-border:after {
+            border-color: transparent #0d0c09 transparent transparent; /* Change border color to black */
+        }
+
+        @media screen and (min-width: 1199px) {
+            #about {padding-top: 3rem;}
+
+            #caption {margin-right: 13rem; padding-top: 2rem;}
+        }
+
+        @media screen and (min-width: 768px) {
+            .navbar {
+                position: sticky; 
+                top: 0;   
+                background-color: transparent; 
+                z-index: 10000;
+                backdrop-filter: blur(20px);
+            }
+        }
+
         @media (max-width: 400px) {
             .hero-image {
                 width: 137px;
                 height: 137px;
+            }
+
+            .hero-section {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                /* justify-content: center; */
+                align-items: center;
             }
         }
         @media (max-width: 480px) {
@@ -35,7 +128,14 @@
                 height: 200px;
             }
 
-    
+            .hero-section {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                /* justify-content: center; */
+                align-items: center;
+            }
+
             #work-heading {
                 font-size: 2px;
                 margin-bottom: 0;
@@ -48,6 +148,14 @@
                 width: 320px;
                 height: 320px;
             }
+
+            .hero-section {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                /* justify-content: center; */
+                align-items: center;
+            }
         }
         
         /* Media Query for Medium Screens */
@@ -55,6 +163,14 @@
             .hero-image {
                 width: 350px;
                 height: 350px;
+            }
+
+            .hero-section {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                /* justify-content: center; */
+                align-items: center;
             }
         }
         
@@ -64,48 +180,175 @@
                 width: 332px;
                 height: 332px;
             }
+
+            .hero-section {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                /* justify-content: center; */
+                align-items: center;
+            }
         }
     </style>
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            setTimeout(() => {
-                document.getElementById("preloader").style.display = "none";
-            }, 4000)
-          });
+        // document.addEventListener("DOMContentLoaded", function() {
+        //     setTimeout(() => {
+        //         // Fade out the preloader
+        //         const preloader = document.getElementById("preloader");
+        //         preloader.style.opacity = "0";
+        //         // Wait for the fade-out animation to finish and then hide the preloader
+        //         setTimeout(() => {
+        //             preloader.style.display = "none";
+        //         }, 500); // Adjust this timing to match your fade-out animation duration
+        //     }, 1000);
+        // });
+
+        let isDarkMode = localStorage.getItem("darkMode") === 'true';
+
+        function toggleDarkMode() {
+            const body = document.body;
+            isDarkMode = !isDarkMode;
+
+            if (isDarkMode) {
+                applyDarkStyles();
+            } else {
+                removeDarkStyles();
+            }
+
+            localStorage.setItem("darkMode", isDarkMode);
+        }
+
+        function applyDarkStyles() {
+            const body = document.body;
+            body.classList.toggle("dark-mode");
+            
+            const svgElements = document.querySelectorAll("svg");
+            svgElements.forEach(svg => {
+                if (body.classList.contains("dark-mode")) {
+                    svg.setAttribute("fill", "#fff"); // Set the desired fill color for dark mode
+                } else {
+                    svg.setAttribute("fill", "currentColor"); // Reset to original fill color for light mode
+                }
+            });
+
+            const navHeading = document.getElementsByClassName("nav-heading");
+            navHeading[0].style.color = "#fff"
+
+            const aTags = document.querySelectorAll(".nav-item");
+            aTags.forEach(aTag => {
+               aTag.style.color = "#fff";
+            });
+
+            const navLink = document.querySelectorAll(".nav-link");
+            navLink.forEach(aTag => {
+               aTag.style.color = "#fff";
+            });
+
+            const timelineLabel = document.querySelectorAll(".timeline-text");
+            timelineLabel.forEach( timeline =>
+                timeline.style.color = "#fff"
+                // timeline.style.backgroundColor = "#000"
+            )
+
+            const tls = document.getElementsByClassName("timeline-bg");
+            console.log("tls: ", tls);
+
+            for (let i = 0; i < tls.length; i++) {
+                tls[i].style.backgroundColor = "#0d0c09";
+            }
+
+            // Get all elements with the class hierarchy
+            const timelineLabels = document.querySelectorAll('.timeline-centered .timeline-entry .timeline-entry-inner .timeline-label');
+
+            // Loop through the elements and add the new class to change border color
+            timelineLabels.forEach(function(label) {
+                label.classList.add('black-border');
+            });
+
+            const nginx = document.getElementById("nginx")
+            nginx.style.filter = "invert(1)";
+
+            const dataAnalysis = document.getElementById("dataAnalysis")
+            dataAnalysis.style.filter = "invert(1)";
+
+            const nextJS = document.getElementById("nextJS")
+            nextJS.style.filter = "invert(1)";
+            // localStorage.setItem("darkMode", true);
+        }
+
+        function removeDarkStyles() {
+            const body = document.body;
+            body.classList.remove("dark-mode");
+            
+            const svgElements = document.querySelectorAll("svg");
+            svgElements.forEach(svg => {
+                svg.removeAttribute("fill");
+            });
+
+            const defaultTextColor = ""; // Let the elements use their original text color
+            const aTags = document.querySelectorAll(".nav-item, .nav-link, .timeline-text");
+            aTags.forEach(aTag => {
+            aTag.style.color = defaultTextColor;
+            });
+
+            const tls = document.getElementsByClassName("timeline-bg");
+            for (let i = 0; i < tls.length; i++) {
+                tls[i].style.backgroundColor = "white";
+            }
+
+            const navHeading = document.getElementsByClassName("nav-heading");
+            navHeading[0].style.color = "#000"
+
+            const timelineLabels = document.querySelectorAll('.timeline-centered .timeline-entry .timeline-entry-inner .timeline-label');
+            timelineLabels.forEach(function(label) {
+                label.classList.remove('black-border');
+            });
+        }
+
+        if (isDarkMode) {
+            applyDarkStyles();
+        } else {
+            removeDarkStyles();
+        }
     </script>
 </head>
 
-<body style="background: #e4e4e4;">
-    <div class="loader" id="preloader">
-        <img src="./assets/loader/spaceLoader.gif" alt="load" />
-      </div>
-    <nav class="navbar navbar-light navbar-expand-md" style="position: sticky; top: 0;   background-color: transparent;
-    backdrop-filter: blur(20px);">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="#">
-                <span style="font-family: 'Ndot 55'; font-size: 1.7rem;">&lt; Ranjan Mangla /&gt;</span>
+<body class="light-mode">
+    <!-- <div class="loader" id="preloader">
+        <img src="./assets/loader/LeflerGIF3.gif" alt="load" />
+      </div> -->
+    <nav class="navbar navbar-light navbar-expand-md">
+        <div class="container" id="home">
+            <a class="navbar-brand d-flex justify-content-center align-items-center" href="#home">
+                <span class="nav-heading" style="font-family: 'Ndot 55'; font-size: 1.7rem; ">&lt; Ranjan Mangla /&gt;</span>
             </a>
-            <button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-2">
-                <span class="visually-hidden">Toggle navigation</span>
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navcol-2" style="font-size: 1.3rem;">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link active" href="#about">About</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="#work">Work</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="#skills">Skills</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="#projects">Projects</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="#social-links">Connect</a></li>
-                </ul>
-                <a class="btn btn-primary ms-md-2" role="button" href="" style="background: rgb(0,0,0);font-family: 'Ndot 55';margin: 0px;margin-left: 90px;">Resume</a>
+            <!-- <div> -->
+                <button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-2">
+                    <span class="visually-hidden">Toggle navigation</span>
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="d-flex justify-content-center align align-items-center">
+                    <div class="collapse navbar-collapse" id="navcol-2" style="font-size: 1.3rem;">
+                        <ul class="navbar-nav ms-auto" >
+                            <li class="nav-item" ><a class="nav-link active"  href="#about">About</a></li>
+                            <li class="nav-item" ><a class="nav-link active"  href="#work">Work</a></li>
+                            <li class="nav-item" ><a class="nav-link active"  href="#skills">Skills</a></li>
+                            <li class="nav-item" ><a class="nav-link active"  href="#projects">Projects</a></li>
+                            <li class="nav-item" ><a class="nav-link active" href="#social-links">Connect</a></li>
+                        </ul>
+                        <button type="button" class="nav-item display-flex justify-content-center align-items-center" onclick="toggleDarkMode()"  style="background: none;border: none; cursor: pointer;">
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" height="55" width="55" viewBox="-255 347 100 125" fill="currentColor" enable-background="new -255 347 100 100" xml:space="preserve"><path d="M-204.6,383.1c0-1.1,0.9-2,2-2l0,0c1.1,0,2,0.9,2,2c0,1.1-0.9,2-2,2c-0.1,0-0.1,0-0.2,0  C-203.8,384.9-204.6,384.1-204.6,383.1z M-197.7,386c-1-0.4-1.5-1.6-1-2.6c0.4-1,1.6-1.5,2.6-1c1,0.4,1.5,1.6,1,2.6  c-0.4,0.8-1.2,1.3-2,1.2C-197.3,386.1-197.5,386.1-197.7,386z M-210.1,385.1c-0.5-1,0-2.2,1-2.6c1-0.5,2.2,0,2.6,1  c0.5,1,0,2.2-1,2.6c-0.3,0.2-0.7,0.2-1,0.2C-209.1,386.2-209.8,385.8-210.1,385.1z M-193.7,388.9c-0.7-0.8-0.7-2.1,0.1-2.8  c0.8-0.7,2.1-0.7,2.8,0.1c0.7,0.8,0.7,2.1-0.1,2.8c-0.4,0.4-1,0.6-1.5,0.5C-192.9,389.5-193.3,389.3-193.7,388.9z M-214.2,389.2  c-0.8-0.7-0.9-2-0.2-2.8c0.7-0.8,2-0.9,2.8-0.2c0.8,0.7,0.9,2,0.2,2.8c-0.4,0.5-1.1,0.7-1.7,0.7  C-213.5,389.7-213.9,389.5-214.2,389.2z M-191.2,393.1c-0.4-1,0.2-2.2,1.2-2.5c1-0.3,2.2,0.2,2.5,1.2c0.4,1-0.2,2.2-1.2,2.5  c-0.3,0.1-0.6,0.1-0.8,0.1C-190.2,394.4-190.9,393.9-191.2,393.1z M-216.3,394.7c-1-0.3-1.6-1.4-1.3-2.5c0.3-1,1.4-1.6,2.5-1.3  c1.1,0.3,1.6,1.4,1.3,2.5c-0.3,0.9-1.2,1.5-2.1,1.4C-216.1,394.8-216.2,394.7-216.3,394.7z M-190.6,398.1L-190.6,398.1L-190.6,398.1  c0.1-1.1,1.1-1.9,2.2-1.8c1.1,0.1,1.9,1.1,1.8,2.2l0,0.1c-0.1,1.1-1.1,1.9-2.2,1.8C-189.9,400.2-190.7,399.2-190.6,398.1z   M-218.3,398.8L-218.3,398.8c-0.1-1.1,0.7-2.1,1.7-2.2c1.1-0.1,2.1,0.7,2.2,1.8c0.1,1.1-0.7,2.1-1.8,2.2c-0.1,0-0.3,0-0.4,0  C-217.4,400.4-218.2,399.7-218.3,398.8z M-191.3,405.6c-1-0.5-1.3-1.8-0.7-2.7c0.5-1,1.8-1.3,2.7-0.8c1,0.5,1.3,1.8,0.7,2.7  c-0.4,0.7-1.2,1.1-1.9,1C-190.8,405.8-191.1,405.7-191.3,405.6z M-216.2,405.1c-0.6-0.9-0.2-2.2,0.7-2.7c0.9-0.6,2.2-0.2,2.7,0.7  c0.6,0.9,0.2,2.2-0.7,2.7c-0.4,0.2-0.8,0.3-1.2,0.3C-215.3,406-215.8,405.6-216.2,405.1z M-195.8,409.3c-0.7-0.9-0.5-2.1,0.4-2.8  c0.9-0.7,2.1-0.5,2.8,0.4c0.7,0.9,0.5,2.1-0.4,2.8c-0.4,0.3-0.9,0.4-1.4,0.4C-194.9,410.1-195.4,409.8-195.8,409.3z M-211.7,409.9  c-0.9-0.6-1.1-1.9-0.5-2.8c0.6-0.9,1.9-1.1,2.8-0.5c0.9,0.6,1.1,1.9,0.5,2.8c-0.4,0.6-1.1,0.9-1.8,0.8  C-211.1,410.3-211.4,410.1-211.7,409.9z M-201.4,411c-0.2-1.1,0.4-2.1,1.5-2.4c1.1-0.2,2.1,0.4,2.4,1.5c0.2,1.1-0.4,2.1-1.5,2.4l0,0  c-0.2,0-0.4,0.1-0.6,0C-200.5,412.5-201.2,411.9-201.4,411z M-205.6,412.6c-1.1-0.2-1.8-1.3-1.6-2.3c0.2-1.1,1.3-1.8,2.3-1.6  c1.1,0.2,1.8,1.3,1.6,2.3c-0.2,1-1.1,1.7-2.1,1.6C-205.5,412.6-205.6,412.6-205.6,412.6z"/><path d="M-204.7,375.5c0-1.1,0.9-2,2-2c1.1,0,2,0.9,2,2c0,1.1-0.9,2-2,2c-0.1,0-0.1,0-0.2,0C-203.9,377.4-204.7,376.5-204.7,375.5z   M-194.7,379.1c-1-0.4-1.5-1.6-1.1-2.6c0.4-1,1.6-1.5,2.6-1.1c1,0.4,1.5,1.6,1.1,2.6c-0.4,0.8-1.2,1.3-2,1.2  C-194.3,379.2-194.5,379.2-194.7,379.1z M-213.2,378.3c-0.5-1,0-2.2,1-2.7c1-0.5,2.2,0,2.7,1c0.5,1,0,2.2-1,2.7  c-0.3,0.2-0.7,0.2-1,0.2C-212.3,379.4-212.9,378.9-213.2,378.3z M-188.1,383.8c-0.8-0.8-0.7-2.1,0.1-2.8c0.8-0.7,2.1-0.7,2.8,0.1  c0.8,0.8,0.7,2.1-0.1,2.8c-0.4,0.4-1,0.6-1.6,0.5C-187.3,384.4-187.8,384.1-188.1,383.8z M-219.9,384.3c-0.8-0.7-0.9-2-0.2-2.8  c0.7-0.8,2-0.9,2.8-0.2c0.8,0.7,0.9,2,0.2,2.8c-0.4,0.5-1.1,0.7-1.7,0.7C-219.2,384.7-219.6,384.5-219.9,384.3z M-184,390.7  c-0.4-1.1,0.2-2.2,1.3-2.5c1.1-0.4,2.2,0.2,2.5,1.3c0.4,1.1-0.2,2.2-1.3,2.5c-0.3,0.1-0.6,0.1-0.8,0.1  C-183.1,392-183.7,391.5-184,390.7z M-223.6,392.4c-1.1-0.3-1.7-1.5-1.3-2.5c0.3-1.1,1.5-1.7,2.5-1.3c1.1,0.3,1.6,1.5,1.3,2.5  c-0.3,0.9-1.2,1.5-2.1,1.4C-223.3,392.5-223.4,392.5-223.6,392.4z M-183.1,398.8L-183.1,398.8L-183.1,398.8L-183.1,398.8  c0.1-1.2,1.1-2,2.2-1.9c1.1,0.1,1.9,1.1,1.8,2.2l0,0l0,0c-0.1,1.1-1.1,1.9-2.2,1.8C-182.4,400.9-183.2,400-183.1,398.8z   M-225.8,399.6L-225.8,399.6c-0.1-1.1,0.7-2.1,1.8-2.2c1.1-0.1,2.1,0.7,2.2,1.8c0.1,1.1-0.7,2.1-1.8,2.2c-0.1,0-0.3,0-0.4,0  C-224.9,401.3-225.7,400.6-225.8,399.6z M-184.8,409.3c-1-0.5-1.3-1.8-0.8-2.7l0,0c0.5-1,1.8-1.3,2.7-0.8c1,0.5,1.3,1.8,0.8,2.7  c-0.4,0.7-1.2,1.1-1.9,1C-184.2,409.5-184.5,409.5-184.8,409.3z M-222.7,408.9c-0.6-1-0.2-2.2,0.7-2.8c1-0.6,2.2-0.2,2.8,0.7  c0.6,1,0.2,2.2-0.7,2.8c-0.4,0.2-0.8,0.3-1.2,0.3C-221.8,409.8-222.4,409.5-222.7,408.9z M-191.3,415.4c-0.7-0.9-0.5-2.2,0.4-2.8  c0.9-0.7,2.2-0.5,2.8,0.4c0.7,0.9,0.5,2.2-0.4,2.8c-0.4,0.3-0.9,0.4-1.4,0.4C-190.4,416.2-191,415.9-191.3,415.4z M-216.1,416.1  c-0.9-0.6-1.1-1.9-0.5-2.8c0.6-0.9,1.9-1.1,2.8-0.5c0.9,0.6,1.1,1.9,0.5,2.8c-0.4,0.6-1.1,0.9-1.8,0.8  C-215.5,416.4-215.8,416.3-216.1,416.1z M-199.8,418.4c-0.2-1.1,0.4-2.2,1.5-2.4l0,0c1.1-0.2,2.2,0.4,2.4,1.5  c0.2,1.1-0.4,2.2-1.5,2.4c-0.2,0.1-0.4,0.1-0.6,0C-198.9,419.9-199.6,419.3-199.8,418.4z M-207.1,420L-207.1,420  c-1.1-0.2-1.8-1.3-1.6-2.4c0.2-1.1,1.3-1.8,2.4-1.6c1.1,0.2,1.8,1.3,1.6,2.4c-0.2,1-1.2,1.7-2.2,1.6C-207,420-207.1,420-207.1,420z"/></svg>
+                        </button>
+                        <a class="btn btn-primary ms-md-2" role="button" href="" style="background: rgb(0,0,0);font-family: 'Ndot 55';margin: 0px;margin-left: 90px;">Resume</a>
+                    </div>
+                <!-- </div> -->
             </div>
         </div>
     </nav>
     
-    <div id="about" class="text-center">
-        <img class="d-block mx-auto mb-4 rounded-circle hero-image" src="assets/img/Ranjan12.jpeg" width="370"
-            height="370" style="margin-top: 18px;">
-        <div class="caption v-middle">
+    <div id="about" class="section-scroll text-center hero-section">
+        <img class="d-block mx-auto mb-4 rounded-circle hero-image" src="assets/img/Ranjan12.jpeg" width="400" height="400" style="margin-top: 18px;">
+        <div class="caption v-middle" id = "caption">
             <h1 class="cd-headline clip" style="font-size: 3rem;">
                 <span class="blc">Hi, I'm Ranjan</span>
                 <br>
@@ -116,8 +359,9 @@
             </h1>
         </div>
     </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
-<article id="work">
+<article id="work" class="section-scroll">
     <div class="px-4 py-5 my-5 text-center" style="padding-left: 27px;padding-bottom: 0px;margin-top: 15px;padding-top: 43px;">
         <h1 id="work-heading" style="font-family: 'Raleway dots', serif;font-weight: 600;text-align: center;padding-top: 0px;margin-top: 0px;font-size: 4rem;padding-bottom: 0px;margin-bottom: 6.5rem;">Work Experience</h1>
         <div class="container">
@@ -126,23 +370,23 @@
             
                     <article class="timeline-entry">
                         
-                        <div class="timeline-entry-inner ">
+                        <div class="timeline-entry-inner timeline-text">
                             <time class="timeline-time" datetime="2023-06-12T09:45">
                                 <span style="font-family: 'Ndot 55';">Intern</span>
                                 <span class="text-left text-wrap" style="font-family: 'Ndot 55';">June 2023</span>
                             </time>
                             
                             <div class="timeline-icon bg-black">
-                                <i class="entypo-feather"></i>
+                                <i class="entypo-feather" style="color: black;"></i>
                             </div>
                             
-                            <div class="timeline-label">
-                                <h2 style="font-family: 'Ndot 55';" class="font-weight-bold">
-                                    <a href="https://Microfocus.com" target="_blank">Intern</a> 
-                                    <span class="text-wrap ms-2">Professional Services Department, Microfocus</span>
+                            <div class="timeline-label timeline-bg timeline-text">
+                                <h2 style="font-family: 'Ndot 55';" class="font-weight-bold timeline-text">
+                                    <a class="timeline-text" href="https://Microfocus.com" target="_blank">Intern</a> 
+                                    <span class="text-wrap ms-2 timeline-text">Professional Services Department, Microfocus</span>
                                 </h2>
                                 <div style="font-family: 'Ndot 55';">
-                                    <p>Creating Business Value Dashboards and leveraging my data analysis skills.</p>
+                                    <p class="timeline-text">Creating Business Value Dashboards and leveraging my data analysis skills.</p>
                                 </div>
                             </div>
                         </div>
@@ -151,7 +395,7 @@
         
         
                     <article class="timeline-entry left-aligned">
-                        <div class="timeline-entry-inner">
+                        <div class="timeline-entry-inner" >
                             <time class="timeline-time" datetime="2014-01-10T03:45" style="font-family: 'Ndot 55';">
                                 <span>Intern</span> 
                                 <span>March, 2023 </span>
@@ -161,14 +405,14 @@
                                 <i class="entypo-suitcase"></i>
                             </div>
                             
-                            <div class="timeline-label">
+                            <div class="timeline-label timeline-bg timeline-text"  style="background-color: F5F5F6; color: white">
                                 <h2 style="font-family: 'Ndot 55'; text-decoration: 'uderline'">
-                                    <a rel="noopener" href="https://www.tadmarketing.co" target="_blank" >Intern</a>
-                                    <span class=" ms-2 text-wrap">Tad Marketing</span>
+                                    <a class="timeline-text" rel="noopener" href="https://www.tadmarketing.co" target="_blank" >Intern</a>
+                                    <span class="timeline-text ms-2 text-wrap">Tad Marketing</span>
                                 </h2>
                                 
                                 <div style="font-family: 'Ndot 55';" class="text-wrap text-left">
-                                    <p>Worked as a Designer & Developer. Designed & Created websites using React, NextJS and designed them.</p>
+                                    <p class="timeline-text">Worked as a Designer & Developer. Designed & Created websites using React, NextJS and designed them.</p>
                                 </div>
                             </div>
                         </div>
@@ -179,37 +423,59 @@
     </div>
 </article>
 
-    <div class="container" id="skills">
+    <div class="container section-scroll" id="skills">
         <h1 style="font-weight: bold;text-align: center;font-size: 4rem;">Skills</h1>
         <div class="vstack gap-0">
             <h1 style="font-family: 'Ndot 55';text-align: center;margin-bottom: 12px;margin-top: 20px;padding-top: 0px;">
                 Languages
             </h1>
-            <div class="vstack hstack"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" data-bs-toggle="tooltip" data-bss-tooltip="" style="font-size: 55px;" title="C++">
+            <div class="vstack hstack">
+                
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" data-bs-toggle="tooltip" data-bss-tooltip="" style="font-size: 55px;" title="C++">
                     <path d="M12.207 16.278C11.1241 17.343 9.63879 18 8 18C4.68629 18 2 15.3137 2 12C2 8.68629 4.68629 6 8 6C9.67492 6 11.1896 6.6863 12.278 7.79303L13.6923 6.37878C12.2418 4.91014 10.2272 4 8 4C3.58172 4 0 7.58172 0 12C0 16.4183 3.58172 20 8 20C10.1911 20 12.1764 19.1192 13.6212 17.6923L12.207 16.278Z" fill="currentColor"></path>
                     <path d="M15 9H13V11H11V13H13V15H15V13H17V11H15V9Z" fill="currentColor"></path>
                     <path d="M20 9H22V11H24V13H22V15H20V13H18V11H20V9Z" fill="currentColor"></path>
-                </svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="-32 0 512 512" width="1em" height="1em" fill="currentColor" data-bs-toggle="tooltip" data-bss-tooltip="" style="font-size: 55px;" title="JavaScript">
+                </svg>
+                
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="-32 0 512 512" width="1em" height="1em" fill="currentColor" data-bs-toggle="tooltip" data-bss-tooltip="" style="font-size: 55px;" title="JavaScript">
                     <!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. -->
                     <path d="M0 32v448h448V32H0zm243.8 349.4c0 43.6-25.6 63.5-62.9 63.5-33.7 0-53.2-17.4-63.2-38.5l34.3-20.7c6.6 11.7 12.6 21.6 27.1 21.6 13.8 0 22.6-5.4 22.6-26.5V237.7h42.1v143.7zm99.6 63.5c-39.1 0-64.4-18.6-76.7-43l34.3-19.8c9 14.7 20.8 25.6 41.5 25.6 17.4 0 28.6-8.7 28.6-20.8 0-14.4-11.4-19.5-30.7-28l-10.5-4.5c-30.4-12.9-50.5-29.2-50.5-63.5 0-31.6 24.1-55.6 61.6-55.6 26.8 0 46 9.3 59.8 33.7L368 290c-7.2-12.9-15-18-27.1-18-12.3 0-20.1 7.8-20.1 18 0 12.6 7.8 17.7 25.9 25.6l10.5 4.5c35.8 15.3 55.9 31 55.9 66.2 0 37.8-29.8 58.6-69.7 58.6z"></path>
-                </svg><i class="fab fa-java" data-bs-toggle="tooltip" data-bss-tooltip="" style="font-size: 52px;" title="Java"></i><i class="fab fa-python" data-bs-toggle="tooltip" data-bss-tooltip="" style="font-size: 58px;" title="Python"></i></div>
+                </svg>
+                
+                <i class="fab fa-java" data-bs-toggle="tooltip" data-bss-tooltip="" style="font-size: 52px;" title="Java"></i>
+                
+                <i class="fab fa-python" data-bs-toggle="tooltip" data-bss-tooltip="" style="font-size: 58px;" title="Python"></i>
+            </div>
+
             <h1 style="font-family: 'Ndot 55';text-align: center;margin-bottom: 12px;margin-top: 30px;padding-top: 14px;">Web Technologies</h1>
-            <div class="vstack text-center flex-row flex-shrink-1 justify-content-center align-items-center align-self-center flex-wrap hstack"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="1em" height="1em" fill="currentColor" data-bs-toggle="tooltip" data-bss-tooltip="" style="font-size: 55px;" title="ReactJS">
+            <div class="vstack text-center flex-row flex-shrink-1 justify-content-center align-items-center align-self-center flex-wrap hstack">
+                
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="1em" height="1em" fill="currentColor" data-bs-toggle="tooltip" data-bss-tooltip="" style="font-size: 55px;" title="ReactJS">
                     <!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. -->
                     <path d="M418.2 177.2c-5.4-1.8-10.8-3.5-16.2-5.1.9-3.7 1.7-7.4 2.5-11.1 12.3-59.6 4.2-107.5-23.1-123.3-26.3-15.1-69.2.6-112.6 38.4-4.3 3.7-8.5 7.6-12.5 11.5-2.7-2.6-5.5-5.2-8.3-7.7-45.5-40.4-91.1-57.4-118.4-41.5-26.2 15.2-34 60.3-23 116.7 1.1 5.6 2.3 11.1 3.7 16.7-6.4 1.8-12.7 3.8-18.6 5.9C38.3 196.2 0 225.4 0 255.6c0 31.2 40.8 62.5 96.3 81.5 4.5 1.5 9 3 13.6 4.3-1.5 6-2.8 11.9-4 18-10.5 55.5-2.3 99.5 23.9 114.6 27 15.6 72.4-.4 116.6-39.1 3.5-3.1 7-6.3 10.5-9.7 4.4 4.3 9 8.4 13.6 12.4 42.8 36.8 85.1 51.7 111.2 36.6 27-15.6 35.8-62.9 24.4-120.5-.9-4.4-1.9-8.9-3-13.5 3.2-.9 6.3-1.9 9.4-2.9 57.7-19.1 99.5-50 99.5-81.7 0-30.3-39.4-59.7-93.8-78.4zM282.9 92.3c37.2-32.4 71.9-45.1 87.7-36 16.9 9.7 23.4 48.9 12.8 100.4-.7 3.4-1.4 6.7-2.3 10-22.2-5-44.7-8.6-67.3-10.6-13-18.6-27.2-36.4-42.6-53.1 3.9-3.7 7.7-7.2 11.7-10.7zM167.2 307.5c5.1 8.7 10.3 17.4 15.8 25.9-15.6-1.7-31.1-4.2-46.4-7.5 4.4-14.4 9.9-29.3 16.3-44.5 4.6 8.8 9.3 17.5 14.3 26.1zm-30.3-120.3c14.4-3.2 29.7-5.8 45.6-7.8-5.3 8.3-10.5 16.8-15.4 25.4-4.9 8.5-9.7 17.2-14.2 26-6.3-14.9-11.6-29.5-16-43.6zm27.4 68.9c6.6-13.8 13.8-27.3 21.4-40.6s15.8-26.2 24.4-38.9c15-1.1 30.3-1.7 45.9-1.7s31 .6 45.9 1.7c8.5 12.6 16.6 25.5 24.3 38.7s14.9 26.7 21.7 40.4c-6.7 13.8-13.9 27.4-21.6 40.8-7.6 13.3-15.7 26.2-24.2 39-14.9 1.1-30.4 1.6-46.1 1.6s-30.9-.5-45.6-1.4c-8.7-12.7-16.9-25.7-24.6-39s-14.8-26.8-21.5-40.6zm180.6 51.2c5.1-8.8 9.9-17.7 14.6-26.7 6.4 14.5 12 29.2 16.9 44.3-15.5 3.5-31.2 6.2-47 8 5.4-8.4 10.5-17 15.5-25.6zm14.4-76.5c-4.7-8.8-9.5-17.6-14.5-26.2-4.9-8.5-10-16.9-15.3-25.2 16.1 2 31.5 4.7 45.9 8-4.6 14.8-10 29.2-16.1 43.4zM256.2 118.3c10.5 11.4 20.4 23.4 29.6 35.8-19.8-.9-39.7-.9-59.5 0 9.8-12.9 19.9-24.9 29.9-35.8zM140.2 57c16.8-9.8 54.1 4.2 93.4 39 2.5 2.2 5 4.6 7.6 7-15.5 16.7-29.8 34.5-42.9 53.1-22.6 2-45 5.5-67.2 10.4-1.3-5.1-2.4-10.3-3.5-15.5-9.4-48.4-3.2-84.9 12.6-94zm-24.5 263.6c-4.2-1.2-8.3-2.5-12.4-3.9-21.3-6.7-45.5-17.3-63-31.2-10.1-7-16.9-17.8-18.8-29.9 0-18.3 31.6-41.7 77.2-57.6 5.7-2 11.5-3.8 17.3-5.5 6.8 21.7 15 43 24.5 63.6-9.6 20.9-17.9 42.5-24.8 64.5zm116.6 98c-16.5 15.1-35.6 27.1-56.4 35.3-11.1 5.3-23.9 5.8-35.3 1.3-15.9-9.2-22.5-44.5-13.5-92 1.1-5.6 2.3-11.2 3.7-16.7 22.4 4.8 45 8.1 67.9 9.8 13.2 18.7 27.7 36.6 43.2 53.4-3.2 3.1-6.4 6.1-9.6 8.9zm24.5-24.3c-10.2-11-20.4-23.2-30.3-36.3 9.6.4 19.5.6 29.5.6 10.3 0 20.4-.2 30.4-.7-9.2 12.7-19.1 24.8-29.6 36.4zm130.7 30c-.9 12.2-6.9 23.6-16.5 31.3-15.9 9.2-49.8-2.8-86.4-34.2-4.2-3.6-8.4-7.5-12.7-11.5 15.3-16.9 29.4-34.8 42.2-53.6 22.9-1.9 45.7-5.4 68.2-10.5 1 4.1 1.9 8.2 2.7 12.2 4.9 21.6 5.7 44.1 2.5 66.3zm18.2-107.5c-2.8.9-5.6 1.8-8.5 2.6-7-21.8-15.6-43.1-25.5-63.8 9.6-20.4 17.7-41.4 24.5-62.9 5.2 1.5 10.2 3.1 15 4.7 46.6 16 79.3 39.8 79.3 58 0 19.6-34.9 44.9-84.8 61.4zm-149.7-15c25.3 0 45.8-20.5 45.8-45.8s-20.5-45.8-45.8-45.8c-25.3 0-45.8 20.5-45.8 45.8s20.5 45.8 45.8 45.8z"></path>
                 </svg>
-                    <img data-bs-toggle="tooltip" data-bss-tooltip="" src="assets/img/nextjs-icon-svgrepo-com.svg" width="65" height="73" title="NextJS">
+
+                    <svg data-bs-toggle="tooltip" id="nextJS" fill="currentColor" data-bss-tooltip="" width="65" height="73" title="NextJS" viewBox="0 0 256 256" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid">
+                        <g>
+                            <path d="M119.616813,0.0688905149 C119.066276,0.118932037 117.314565,0.294077364 115.738025,0.419181169 C79.3775171,3.69690087 45.3192571,23.3131775 23.7481916,53.4631946 C11.7364614,70.2271045 4.05395894,89.2428829 1.15112414,109.384595 C0.12512219,116.415429 0,118.492153 0,128.025062 C0,137.557972 0.12512219,139.634696 1.15112414,146.665529 C8.10791789,194.730411 42.3163245,235.11392 88.7116325,250.076335 C97.0197458,252.753556 105.778299,254.580072 115.738025,255.680985 C119.616813,256.106338 136.383187,256.106338 140.261975,255.680985 C157.453763,253.779407 172.017986,249.525878 186.382014,242.194795 C188.584164,241.068861 189.00958,240.768612 188.709286,240.518404 C188.509091,240.36828 179.124927,227.782837 167.86393,212.570214 L147.393939,184.922273 L121.743891,146.965779 C107.630108,126.098464 96.0187683,109.034305 95.9186706,109.034305 C95.8185728,109.009284 95.7184751,125.873277 95.6684262,146.465363 C95.5933529,182.52028 95.5683284,183.971484 95.1178886,184.82219 C94.4672532,186.048207 93.9667644,186.548623 92.915738,187.099079 C92.114956,187.499411 91.4142717,187.574474 87.6355816,187.574474 L83.3063539,187.574474 L82.1552297,186.848872 C81.4044966,186.373477 80.8539589,185.747958 80.4785924,185.022356 L79.9530792,183.896422 L80.0031281,133.729796 L80.0782014,83.5381493 L80.8539589,82.5623397 C81.25435,82.0369037 82.1051808,81.3613431 82.7057674,81.0360732 C83.7317693,80.535658 84.1321603,80.4856165 88.4613881,80.4856165 C93.5663734,80.4856165 94.4172043,80.6857826 95.7434995,82.1369867 C96.1188661,82.5373189 110.007429,103.454675 126.623656,128.650581 C143.239883,153.846488 165.962072,188.250034 177.122972,205.139048 L197.392766,235.839522 L198.418768,235.163961 C207.502639,229.259062 217.112023,220.852086 224.719453,212.09482 C240.910264,193.504394 251.345455,170.835585 254.848876,146.665529 C255.874878,139.634696 256,137.557972 256,128.025062 C256,118.492153 255.874878,116.415429 254.848876,109.384595 C247.892082,61.3197135 213.683675,20.9362052 167.288368,5.97379012 C159.105376,3.32158945 150.396872,1.49507389 140.637341,0.394160408 C138.234995,0.143952798 121.693842,-0.131275573 119.616813,0.0688905149 L119.616813,0.0688905149 Z M172.017986,77.4831252 C173.219159,78.0836234 174.195112,79.2345784 174.545455,80.435575 C174.74565,81.0861148 174.795699,94.9976579 174.74565,126.348671 L174.670577,171.336 L166.73783,159.17591 L158.780059,147.01582 L158.780059,114.313685 C158.780059,93.1711423 158.880156,81.2862808 159.030303,80.7108033 C159.430694,79.3096407 160.306549,78.2087272 161.507722,77.5581875 C162.533724,77.0327515 162.909091,76.98271 166.837928,76.98271 C170.541544,76.98271 171.19218,77.0327515 172.017986,77.4831252 Z" fill="#000000">
                     
-                    <img data-bs-toggle="tooltip" data-bss-tooltip="" src="assets/img/logo-firebase-svgrepo-com.svg" width="57" height="69" title="Firebase">
+                    </path>
+                        </g>
+                    </svg>
+
+                    <svg fill="currentColor" data-bs-toggle="tooltip" data-bss-tooltip=""  width="57" height="69" title="Firebase" viewBox="0 0 512 512" id="icons" xmlns="http://www.w3.org/2000/svg"><path id="icon" d="M93.19,329.38,140.64,25.31c1.64-10.37,15.55-12.82,20.46-3.55l51,95.45ZM432,400,385.26,123.21a11,11,0,0,0-18.54-6L80,400l159.36,91.91a33.18,33.18,0,0,0,31.91,0ZM302.36,158.93,265.82,89.39a10.86,10.86,0,0,0-19.36,0L85.83,375.74Z"/></svg>
                     
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -64 640 640" width="1em" height="1em" fill="currentColor" data-bs-toggle="tooltip" data-bss-tooltip="" style="font-size: 54px;" title="NodeJS">
                     <!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. -->
                     <path d="M316.3 452c-2.1 0-4.2-.6-6.1-1.6L291 439c-2.9-1.6-1.5-2.2-.5-2.5 3.8-1.3 4.6-1.6 8.7-4 .4-.2 1-.1 1.4.1l14.8 8.8c.5.3 1.3.3 1.8 0L375 408c.5-.3.9-.9.9-1.6v-66.7c0-.7-.3-1.3-.9-1.6l-57.8-33.3c-.5-.3-1.2-.3-1.8 0l-57.8 33.3c-.6.3-.9 1-.9 1.6v66.7c0 .6.4 1.2.9 1.5l15.8 9.1c8.6 4.3 13.9-.8 13.9-5.8v-65.9c0-.9.7-1.7 1.7-1.7h7.3c.9 0 1.7.7 1.7 1.7v65.9c0 11.5-6.2 18-17.1 18-3.3 0-6 0-13.3-3.6l-15.2-8.7c-3.7-2.2-6.1-6.2-6.1-10.5v-66.7c0-4.3 2.3-8.4 6.1-10.5l57.8-33.4c3.7-2.1 8.5-2.1 12.1 0l57.8 33.4c3.7 2.2 6.1 6.2 6.1 10.5v66.7c0 4.3-2.3 8.4-6.1 10.5l-57.8 33.4c-1.7 1.1-3.8 1.7-6 1.7zm46.7-65.8c0-12.5-8.4-15.8-26.2-18.2-18-2.4-19.8-3.6-19.8-7.8 0-3.5 1.5-8.1 14.8-8.1 11.9 0 16.3 2.6 18.1 10.6.2.8.8 1.3 1.6 1.3h7.5c.5 0 .9-.2 1.2-.5.3-.4.5-.8.4-1.3-1.2-13.8-10.3-20.2-28.8-20.2-16.5 0-26.3 7-26.3 18.6 0 12.7 9.8 16.1 25.6 17.7 18.9 1.9 20.4 4.6 20.4 8.3 0 6.5-5.2 9.2-17.4 9.2-15.3 0-18.7-3.8-19.8-11.4-.1-.8-.8-1.4-1.7-1.4h-7.5c-.9 0-1.7.7-1.7 1.7 0 9.7 5.3 21.3 30.6 21.3 18.5 0 29-7.2 29-19.8zm54.5-50.1c0 6.1-5 11.1-11.1 11.1s-11.1-5-11.1-11.1c0-6.3 5.2-11.1 11.1-11.1 6-.1 11.1 4.8 11.1 11.1zm-1.8 0c0-5.2-4.2-9.3-9.4-9.3-5.1 0-9.3 4.1-9.3 9.3 0 5.2 4.2 9.4 9.3 9.4 5.2-.1 9.4-4.3 9.4-9.4zm-4.5 6.2h-2.6c-.1-.6-.5-3.8-.5-3.9-.2-.7-.4-1.1-1.3-1.1h-2.2v5h-2.4v-12.5h4.3c1.5 0 4.4 0 4.4 3.3 0 2.3-1.5 2.8-2.4 3.1 1.7.1 1.8 1.2 2.1 2.8.1 1 .3 2.7.6 3.3zm-2.8-8.8c0-1.7-1.2-1.7-1.8-1.7h-2v3.5h1.9c1.6 0 1.9-1.1 1.9-1.8zM137.3 191c0-2.7-1.4-5.1-3.7-6.4l-61.3-35.3c-1-.6-2.2-.9-3.4-1h-.6c-1.2 0-2.3.4-3.4 1L3.7 184.6C1.4 185.9 0 188.4 0 191l.1 95c0 1.3.7 2.5 1.8 3.2 1.1.7 2.5.7 3.7 0L42 268.3c2.3-1.4 3.7-3.8 3.7-6.4v-44.4c0-2.6 1.4-5.1 3.7-6.4l15.5-8.9c1.2-.7 2.4-1 3.7-1 1.3 0 2.6.3 3.7 1l15.5 8.9c2.3 1.3 3.7 3.8 3.7 6.4v44.4c0 2.6 1.4 5.1 3.7 6.4l36.4 20.9c1.1.7 2.6.7 3.7 0 1.1-.6 1.8-1.9 1.8-3.2l.2-95zM472.5 87.3v176.4c0 2.6-1.4 5.1-3.7 6.4l-61.3 35.4c-2.3 1.3-5.1 1.3-7.4 0l-61.3-35.4c-2.3-1.3-3.7-3.8-3.7-6.4v-70.8c0-2.6 1.4-5.1 3.7-6.4l61.3-35.4c2.3-1.3 5.1-1.3 7.4 0l15.3 8.8c1.7 1 3.9-.3 3.9-2.2v-94c0-2.8 3-4.6 5.5-3.2l36.5 20.4c2.3 1.2 3.8 3.7 3.8 6.4zm-46 128.9c0-.7-.4-1.3-.9-1.6l-21-12.2c-.6-.3-1.3-.3-1.9 0l-21 12.2c-.6.3-.9.9-.9 1.6v24.3c0 .7.4 1.3.9 1.6l21 12.1c.6.3 1.3.3 1.8 0l21-12.1c.6-.3.9-.9.9-1.6v-24.3zm209.8-.7c2.3-1.3 3.7-3.8 3.7-6.4V192c0-2.6-1.4-5.1-3.7-6.4l-60.9-35.4c-2.3-1.3-5.1-1.3-7.4 0l-61.3 35.4c-2.3 1.3-3.7 3.8-3.7 6.4v70.8c0 2.7 1.4 5.1 3.7 6.4l60.9 34.7c2.2 1.3 5 1.3 7.3 0l36.8-20.5c2.5-1.4 2.5-5 0-6.4L550 241.6c-1.2-.7-1.9-1.9-1.9-3.2v-22.2c0-1.3.7-2.5 1.9-3.2l19.2-11.1c1.1-.7 2.6-.7 3.7 0l19.2 11.1c1.1.7 1.9 1.9 1.9 3.2v17.4c0 2.8 3.1 4.6 5.6 3.2l36.7-21.3zM559 219c-.4.3-.7.7-.7 1.2v13.6c0 .5.3 1 .7 1.2l11.8 6.8c.4.3 1 .3 1.4 0L584 235c.4-.3.7-.7.7-1.2v-13.6c0-.5-.3-1-.7-1.2l-11.8-6.8c-.4-.3-1-.3-1.4 0L559 219zm-254.2 43.5v-70.4c0-2.6-1.6-5.1-3.9-6.4l-61.1-35.2c-2.1-1.2-5-1.4-7.4 0l-61.1 35.2c-2.3 1.3-3.9 3.7-3.9 6.4v70.4c0 2.8 1.9 5.2 4 6.4l61.2 35.2c2.4 1.4 5.2 1.3 7.4 0l61-35.2c1.8-1 3.1-2.7 3.6-4.7.1-.5.2-1.1.2-1.7zm-74.3-124.9l-.8.5h1.1l-.3-.5zm76.2 130.2l-.4-.7v.9l.4-.2z"></path>
+                    </svg>
+
+                <svg fill="currentColor" data-bs-toggle="tooltip" data-bss-tooltip="" src="assets/img/sql-svgrepo-com.svg" width="95" height="62" title="SQl" viewBox="0 0 32 32" id="icon" xmlns="http://www.w3.org/2000/svg"><defs><style>.cls-1{fill:none;}</style></defs><title>SQL</title><polygon points="24 21 24 9 22 9 22 23 30 23 30 21 24 21"/><path d="M18,9H14a2,2,0,0,0-2,2V21a2,2,0,0,0,2,2h1v2a2,2,0,0,0,2,2h2V25H17V23h1a2,2,0,0,0,2-2V11A2,2,0,0,0,18,9ZM14,21V11h4V21Z"/><path d="M8,23H2V21H8V17H4a2,2,0,0,1-2-2V11A2,2,0,0,1,4,9h6v2H4v4H8a2,2,0,0,1,2,2v4A2,2,0,0,1,8,23Z"/><rect id="_Transparent_Rectangle_" data-name="&lt;Transparent Rectangle&gt;" class="cls-1" width="32" height="32"/></svg>
+
+                <svg fill="currentColor" data-bs-toggle="tooltip" data-bss-tooltip="" src="assets/img/mongodb-svgrepo-com.svg" width="73" height="78" style="padding-top: 0px;margin-left: -40px;" title="MongoDB" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <title>mongodb</title>
+                    <path d="M15.821 23.185s0-10.361 0.344-10.36c0.266 0 0.612 13.365 0.612 13.365-0.476-0.056-0.956-2.199-0.956-3.005zM22.489 12.945c-0.919-4.016-2.932-7.469-5.708-10.134l-0.007-0.006c-0.338-0.516-0.647-1.108-0.895-1.732l-0.024-0.068c0.001 0.020 0.001 0.044 0.001 0.068 0 0.565-0.253 1.070-0.652 1.409l-0.003 0.002c-3.574 3.034-5.848 7.505-5.923 12.508l-0 0.013c-0.001 0.062-0.001 0.135-0.001 0.208 0 4.957 2.385 9.357 6.070 12.115l0.039 0.028 0.087 0.063q0.241 1.784 0.412 3.576h0.601c0.166-1.491 0.39-2.796 0.683-4.076l-0.046 0.239c0.396-0.275 0.742-0.56 1.065-0.869l-0.003 0.003c2.801-2.597 4.549-6.297 4.549-10.404 0-0.061-0-0.121-0.001-0.182l0 0.009c-0.003-0.981-0.092-1.94-0.261-2.871l0.015 0.099z"></path>
                 </svg>
-                
-                <img data-bs-toggle="tooltip" data-bss-tooltip="" src="assets/img/sql-svgrepo-com.svg" width="95" height="62" title="SQl">
-                
-                <img data-bs-toggle="tooltip" data-bss-tooltip="" src="assets/img/mongodb-svgrepo-com.svg" width="73" height="78" style="padding-top: 0px;margin-left: -40px;" title="MongoDB">
             </div>
 
             <h1 style="font-family: 'Ndot 55';text-align: center;margin-top: 30px;margin-bottom: 12px;padding-top: 14px;">Tools</h1>
@@ -233,9 +499,12 @@
                     <path d="M349.9 236.3h-66.1v-59.4h66.1v59.4zm0-204.3h-66.1v60.7h66.1V32zm78.2 144.8H362v59.4h66.1v-59.4zm-156.3-72.1h-66.1v60.1h66.1v-60.1zm78.1 0h-66.1v60.1h66.1v-60.1zm276.8 100c-14.4-9.7-47.6-13.2-73.1-8.4-3.3-24-16.7-44.9-41.1-63.7l-14-9.3-9.3 14c-18.4 27.8-23.4 73.6-3.7 103.8-8.7 4.7-25.8 11.1-48.4 10.7H2.4c-8.7 50.8 5.8 116.8 44 162.1 37.1 43.9 92.7 66.2 165.4 66.2 157.4 0 273.9-72.5 328.4-204.2 21.4.4 67.6.1 91.3-45.2 1.5-2.5 6.6-13.2 8.5-17.1l-13.3-8.9zm-511.1-27.9h-66v59.4h66.1v-59.4zm78.1 0h-66.1v59.4h66.1v-59.4zm78.1 0h-66.1v59.4h66.1v-59.4zm-78.1-72.1h-66.1v60.1h66.1v-60.1z"></path>
                 </svg>
                 
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -64 640 640" width="1em" height="1em" fill="currentColor" data-bs-toggle="tooltip" data-bss-tooltip="" style="font-size: 55px;" data-toggle="toolkit" title="Nginx">
-                    <!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. -->
-                    <path d="M349.9 236.3h-66.1v-59.4h66.1v59.4zm0-204.3h-66.1v60.7h66.1V32zm78.2 144.8H362v59.4h66.1v-59.4zm-156.3-72.1h-66.1v60.1h66.1v-60.1zm78.1 0h-66.1v60.1h66.1v-60.1zm276.8 100c-14.4-9.7-47.6-13.2-73.1-8.4-3.3-24-16.7-44.9-41.1-63.7l-14-9.3-9.3 14c-18.4 27.8-23.4 73.6-3.7 103.8-8.7 4.7-25.8 11.1-48.4 10.7H2.4c-8.7 50.8 5.8 116.8 44 162.1 37.1 43.9 92.7 66.2 165.4 66.2 157.4 0 273.9-72.5 328.4-204.2 21.4.4 67.6.1 91.3-45.2 1.5-2.5 6.6-13.2 8.5-17.1l-13.3-8.9zm-511.1-27.9h-66v59.4h66.1v-59.4zm78.1 0h-66.1v59.4h66.1v-59.4zm78.1 0h-66.1v59.4h66.1v-59.4zm-78.1-72.1h-66.1v60.1h66.1v-60.1z"></path>
+                <svg id="nginx" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" data-bs-toggle="tooltip" data-bss-tooltip="" style="font-size: 55px;" data-toggle="toolkit" title="Nginx" viewBox="-17.5 0 291 291" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid" >
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+
+                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+
+                    <g id="SVGRepo_iconCarrier"> <g> <path d="M2.05386819,218.186819 C3.37421203,220.534097 5.28137536,222.294556 7.6286533,223.6149 L120.591404,288.751862 L120.591404,288.751862 C125.28596,291.539255 131.00745,291.539255 135.555301,288.751862 L248.518052,223.6149 C253.212607,220.974212 256,215.986246 256,210.558166 L256,80.2842407 L256,80.2842407 C256,74.8561605 253.212607,69.8681948 248.518052,67.2275072 L135.555301,2.09054441 L135.555301,2.09054441 C130.860745,-0.696848138 125.139255,-0.696848138 120.591404,2.09054441 L120.591404,2.09054441 L7.6286533,67.2275072 C2.78739255,69.8681948 0,74.8561605 0,80.2842407 L0,80.2842407 L0,210.704871 C0,213.345559 0.586819484,215.839542 2.05386819,218.186819" fill="#000000"> </path> <path d="M91.8372493,195.154155 C91.8372493,203.222923 85.382235,209.677937 77.313467,209.677937 C69.2446991,209.677937 62.7896848,203.222923 62.7896848,195.154155 L62.7896848,195.154155 L62.7896848,95.5415473 C62.7896848,87.7661891 69.6848138,81.4578797 79.2206304,81.4578797 C86.1157593,81.4578797 94.1845272,84.2452722 99.025788,90.2601719 L103.426934,95.5415473 L164.162751,168.160458 L164.162751,95.834957 L164.162751,95.834957 C164.162751,87.7661891 170.617765,81.3111748 178.686533,81.3111748 C186.755301,81.3111748 193.210315,87.7661891 193.210315,95.834957 L193.210315,95.834957 L193.210315,195.447564 C193.210315,203.222923 186.315186,209.531232 176.77937,209.531232 C169.884241,209.531232 161.815473,206.74384 156.974212,200.72894 L91.8372493,122.975358 L91.8372493,195.154155 L91.8372493,195.154155 Z" fill="#FFFFFF"> </path> </g> </g>
                 </svg>
             
             </div>
@@ -243,9 +512,64 @@
             <h1 style="font-family: 'Ndot 55';text-align: center;margin-top: 30px;margin-bottom: 12px;padding-top: 14px;">Additional Skills</h1>
 
             <div class="vstack hstack">
-                <img data-bs-toggle="tooltip" data-bss-tooltip="" src="assets/img/histogram-chart-svgrepo-com.svg" width="93" height="81" data-toggle="tooltip" title="Data Analysis" />
-                
-                <img data-bs-toggle="tooltip" data-bss-tooltip="" src="assets/img/machine-learning-03-svgrepo-com.svg" width="60" height="74" data-toggle="tooltip" title="Machine Learning" loading="lazy" />
+
+                <svg  version="1.1" id="dataAnalysis" data-bs-toggle="tooltip" data-bss-tooltip="" width="93" height="81" data-toggle="tooltip" title="Data Analysis" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" xml:space="preserve">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M12 6C12 5.44772 11.5523 5 11 5C10.4477 5 10 5.44772 10 6V16C10 16.5523 10.4477 17 11 17C11.5523 17 12 16.5523 12 16V6ZM9 9C9 8.44772 8.55228 8 8 8C7.44772 8 7 8.44772 7 9V16C7 16.5523 7.44772 17 8 17C8.55228 17 9 16.5523 9 16V9ZM15 9C15 8.44772 14.5523 8 14 8C13.4477 8 13 8.44772 13 9V16C13 16.5523 13.4477 17 14 17C14.5523 17 15 16.5523 15 16V9ZM18 13C18 12.4477 17.5523 12 17 12C16.4477 12 16 12.4477 16 13V16C16 16.5523 16.4477 17 17 17C17.5523 17 18 16.5523 18 16V13ZM6 15C6 14.4477 5.55228 14 5 14C4.44772 14 4 14.4477 4 15V16C4 16.5523 4.44772 17 5 17C5.55228 17 6 16.5523 6 16V15ZM21 15C21 14.4477 20.5523 14 20 14C19.4477 14 19 14.4477 19 15V16C19 16.5523 19.4477 17 20 17C20.5523 17 21 16.5523 21 16V15ZM4 18C3.44772 18 3 18.4477 3 19C3 19.5523 3.44772 20 4 20H21C21.5523 20 22 19.5523 22 19C22 18.4477 21.5523 18 21 18H4Z" fill="#000000"/>
+                </svg>
+
+                <svg fill="currentColor" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-toggle="tooltip" title="Machine Learning" data-bs-toggle="tooltip" data-bss-tooltip=""
+                    viewBox="0 0 32 32" xml:space="preserve" width="60" height="74">
+                    <path id="machine--learning--03_1_" d="M29.36,15.695v-3.389c0.575-0.159,1-0.681,1-1.305c0-0.75-0.61-1.36-1.36-1.36
+                        c-0.191,0-0.372,0.04-0.537,0.111l-2.365-2.956C26.261,6.572,26.36,6.298,26.36,6c0-0.75-0.61-1.36-1.36-1.36
+                        c-0.401,0-0.758,0.177-1.007,0.454l-3.659-1.83C20.351,3.179,20.36,3.091,20.36,3c0-0.75-0.61-1.36-1.36-1.36
+                        c-0.625,0-1.147,0.425-1.306,1h-4.389c-0.159-0.575-0.681-1-1.305-1c-0.75,0-1.36,0.61-1.36,1.36c0,0.091,0.01,0.179,0.027,0.264
+                        l-2.66,1.33C7.758,4.318,7.401,4.14,7,4.14c-0.75,0-1.36,0.61-1.36,1.36c0,0.273,0.082,0.526,0.221,0.739L3.598,8.785
+                        C3.417,8.695,3.216,8.64,3,8.64c-0.75,0-1.36,0.61-1.36,1.36c0,0.625,0.425,1.146,1,1.305v3.389c-0.575,0.159-1,0.681-1,1.305
+                        c0,0.75,0.61,1.36,1.36,1.36c0.546,0,1.014-0.325,1.231-0.791l3.424,0.571C7.726,17.824,8.298,18.36,9,18.36
+                        c0.091,0,0.179-0.01,0.264-0.027l0.83,1.659C9.818,20.242,9.64,20.599,9.64,21c0,0.75,0.61,1.36,1.36,1.36
+                        c0.47,0,0.885-0.24,1.13-0.604l3.518,1.173C15.646,22.953,15.64,22.976,15.64,23c0,0.625,0.425,1.147,1,1.306v3.388
+                        c-0.575,0.159-1,0.681-1,1.306c0,0.75,0.61,1.36,1.36,1.36s1.36-0.61,1.36-1.36c0-0.624-0.425-1.147-1-1.306v-3.389
+                        c0.575-0.159,1-0.681,1-1.306c0-0.452-0.224-0.85-0.564-1.098l0.682-1.82l3.163,0.904c0,0.005-0.001,0.01-0.001,0.015
+                        c0,0.624,0.425,1.147,1,1.306v5.389c-0.575,0.159-1,0.681-1,1.306c0,0.75,0.61,1.36,1.36,1.36s1.36-0.61,1.36-1.36
+                        c0-0.624-0.425-1.147-1-1.306v-5.389c0.575-0.159,1-0.681,1-1.306c0-0.149-0.03-0.29-0.074-0.424l3.828-2.553
+                        C28.353,18.231,28.66,18.36,29,18.36c0.75,0,1.36-0.61,1.36-1.36C30.36,16.376,29.935,15.854,29.36,15.695z M21.354,14.932
+                        c-0.002-0.045-0.007-0.09-0.014-0.134l3.049-1.355l3.313,2.899L21.354,14.932z M20,15.64c-0.353,0-0.64-0.287-0.64-0.64
+                        s0.287-0.64,0.64-0.64s0.64,0.287,0.64,0.64S20.353,15.64,20,15.64z M20,13.64c-0.75,0-1.36,0.61-1.36,1.36
+                        c0,0.452,0.224,0.85,0.564,1.097l-1.166,3.11l-1.902-0.543l-1.465-5.126l5.463-3.756l0.628,0.489l3.028,2.65l-2.745,1.22
+                        C20.796,13.838,20.423,13.64,20,13.64z M9.131,15.653L8.122,9.85l3.612-0.361V9.485C11.93,9.995,12.421,10.36,13,10.36
+                        c0.005,0,0.009-0.001,0.014-0.001l0.823,2.879l-3.966,2.726C9.666,15.792,9.412,15.681,9.131,15.653z M13,9.64
+                        c-0.353,0-0.64-0.287-0.64-0.64S12.647,8.36,13,8.36S13.64,8.647,13.64,9S13.353,9.64,13,9.64z M10.28,16.557l3.765-2.589
+                        l1.275,4.463l-4.962-1.418c0-0.005,0.001-0.009,0.001-0.014C10.36,16.844,10.328,16.697,10.28,16.557z M24.129,7.036
+                        C24.366,7.235,24.667,7.36,25,7.36c0.191,0,0.372-0.04,0.537-0.111l2.365,2.955C27.739,10.428,27.64,10.702,27.64,11
+                        c0,0.069,0.01,0.135,0.02,0.201l-3.144,1.397l-3.295-2.883l-0.464-0.361L24.129,7.036z M28.251,15.866l-3.138-2.745l2.841-1.262
+                        c0.176,0.213,0.412,0.371,0.686,0.446v3.389C28.501,15.733,28.369,15.789,28.251,15.866z M29.64,11c0,0.353-0.287,0.64-0.64,0.64
+                        s-0.64-0.287-0.64-0.64s0.287-0.64,0.64-0.64S29.64,10.647,29.64,11z M25,5.36c0.353,0,0.64,0.287,0.64,0.64S25.353,6.64,25,6.64
+                        S24.36,6.353,24.36,6S24.647,5.36,25,5.36z M19,2.36c0.353,0,0.64,0.287,0.64,0.64S19.353,3.64,19,3.64S18.36,3.353,18.36,3
+                        S18.647,2.36,19,2.36z M19,4.36c0.401,0,0.758-0.177,1.007-0.454l3.659,1.83C23.649,5.821,23.64,5.909,23.64,6
+                        c0,0.156,0.032,0.303,0.08,0.443l-3.56,2.448l-6.904-5.37c0.021-0.051,0.035-0.106,0.05-0.161h4.389
+                        C17.853,3.935,18.375,4.36,19,4.36z M12,2.36c0.353,0,0.64,0.287,0.64,0.64S12.353,3.64,12,3.64S11.36,3.353,11.36,3
+                        S11.647,2.36,12,2.36z M10.993,3.906C11.242,4.182,11.599,4.36,12,4.36c0.304,0,0.583-0.104,0.81-0.274l6.728,5.232l-5.075,3.489
+                        l-0.757-2.65C14.096,9.918,14.36,9.491,14.36,9c0-0.75-0.61-1.36-1.36-1.36c-0.673,0-1.229,0.492-1.337,1.135V8.772L7.998,9.138
+                        l-0.42-2.412C8.039,6.508,8.36,6.042,8.36,5.5c0-0.091-0.01-0.179-0.027-0.264L10.993,3.906z M4.265,9.511
+                        C4.231,9.423,4.19,9.339,4.139,9.261l2.263-2.546c0.143,0.071,0.3,0.115,0.467,0.132L7.28,9.21L4.265,9.511z M7,4.86
+                        c0.353,0,0.64,0.287,0.64,0.64S7.353,6.14,7,6.14S6.36,5.853,6.36,5.5S6.647,4.86,7,4.86z M2.36,10c0-0.353,0.287-0.64,0.64-0.64
+                        S3.64,9.647,3.64,10S3.353,10.64,3,10.64S2.36,10.353,2.36,10z M3,16.64c-0.353,0-0.64-0.287-0.64-0.64S2.647,15.36,3,15.36
+                        S3.64,15.647,3.64,16C3.64,16.353,3.353,16.64,3,16.64z M7.769,16.43l-3.424-0.571c-0.059-0.561-0.455-1.018-0.986-1.165v-3.389
+                        c0.503-0.139,0.888-0.556,0.977-1.077l3.067-0.307l1.018,5.853C8.135,15.91,7.904,16.142,7.769,16.43z M8.36,17
+                        c0-0.353,0.287-0.64,0.64-0.64S9.64,16.647,9.64,17S9.353,17.64,9,17.64S8.36,17.353,8.36,17z M11,21.64
+                        c-0.353,0-0.64-0.287-0.64-0.64s0.287-0.64,0.64-0.64s0.64,0.287,0.64,0.64S11.353,21.64,11,21.64z M12.353,21.071
+                        c0.001-0.024,0.007-0.047,0.007-0.071c0-0.75-0.61-1.36-1.36-1.36c-0.091,0-0.179,0.01-0.264,0.027l-0.83-1.659
+                        c0.098-0.088,0.182-0.189,0.251-0.302l5.396,1.541l0.742,2.596c-0.168,0.103-0.315,0.238-0.425,0.402L12.353,21.071z M17.64,29
+                        c0,0.353-0.287,0.64-0.64,0.64c-0.353,0-0.64-0.287-0.64-0.64s0.287-0.64,0.64-0.64C17.353,28.36,17.64,28.647,17.64,29z M17,23.64
+                        c-0.353,0-0.64-0.287-0.64-0.64s0.287-0.64,0.64-0.64c0.353,0,0.64,0.287,0.64,0.64S17.353,23.64,17,23.64z M17.121,21.652
+                        C17.08,21.648,17.041,21.64,17,21.64c-0.005,0-0.009,0.001-0.014,0.001l-0.618-2.162l1.416,0.404L17.121,21.652z M18.732,19.406
+                        l1.147-3.059c0.041,0.004,0.08,0.012,0.121,0.012c0.519,0,0.967-0.296,1.196-0.725l6.451,1.433c0.006,0.124,0.03,0.243,0.068,0.356
+                        l-3.828,2.553C23.647,19.769,23.34,19.64,23,19.64c-0.491,0-0.918,0.264-1.158,0.655L18.732,19.406z M23.64,29
+                        c0,0.353-0.287,0.64-0.64,0.64s-0.64-0.287-0.64-0.64s0.287-0.64,0.64-0.64S23.64,28.647,23.64,29z M23,21.64
+                        c-0.353,0-0.64-0.287-0.64-0.64s0.287-0.64,0.64-0.64s0.64,0.287,0.64,0.64S23.353,21.64,23,21.64z M29,17.64
+                        c-0.353,0-0.64-0.287-0.64-0.64c0-0.353,0.287-0.64,0.64-0.64s0.64,0.287,0.64,0.64C29.64,17.353,29.353,17.64,29,17.64z"/>
+                    <rect id="_Transparent_Rectangle" style="fill:none;" width="32" height="32"/>
+                </svg>
                 
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-96 0 512 512" width="1em" height="1em" fill="currentColor" data-bs-toggle="tooltip" data-bss-tooltip="" style="font-size: 55px;" data-toggle="tooltip" title="Solidity">
                     <!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. -->
@@ -256,28 +580,33 @@
         </div>
     </div>
 
-    <div id="projects" class="container" style="margin-top: 27px;padding-top: 30px;">
+    <div id="projects" class="container section-scroll" style="margin-top: 27px;padding-top: 30px;">
         <h1 style="font-weight: bold;text-align: center;font-size: 4rem;">Projects</h1>
         <div class="row gx-3 gy-3 row-cols-2 row-cols-sm-2 row-cols-md-2 row-cols-lg-4 row-cols-xl-4 row-cols-xxl-4 justify-content-center align-items-center py-2">
             <div class="col-lg-6">
-                <div class="card cards" style="border-style: none;"><img class="card-img w-100 d-block card_image" src="assets/img/imgonline-com-ua-DOTpattern-hNo1LmODelkK.jpg" style="border-style: none;">
-                    <div class="card-img-overlay" style="border-style: none;"><a href="https://github.com/ranjanmangla1/SmartNotes" target="_blank">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-box-arrow-up-right" style="font-size: 26px;font-weight: bold;">
-                                <path fill-rule="evenodd" d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"></path>
-                                <path fill-rule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"></path>
+                <div class="card cards" style="border-style: none;">
+                    <img class="card-img w-100 d-block card_image" src="https://images.pexels.com/photos/7516363/pexels-photo-7516363.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" style="border-style: none; object-fit: cover" style="border-style: none;">
+                    <div class="card-img-overlay" style="border-style: none; background-color: transparent; backdrop-filter: blur(10px); background-color: rgba(0, 0, 0, 0.5); border-radius: 15px;">
+                        <a href="https://github.com/ranjanmangla1/SmartNotes" target="_blank">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="white" viewBox="0 0 16 16" class="bi bi-arrow-up-right" style="font-size: 22px;">
+                                <path fill-rule="evenodd" d="M14 2.5a.5.5 0 0 0-.5-.5h-6a.5.5 0 0 0 0 1h4.793L2.146 13.146a.5.5 0 0 0 .708.708L13 3.707V8.5a.5.5 0 0 0 1 0v-6z"></path>
                             </svg>
                         </a>
+                        <h3 style="font-family: 'Ndot 55';color: white; text-align: center;">SignLink</h3>
+                        <p style="font-family: 'Ndot 55';color: white; text-align: center;">
+                            An AI based model that converts sign language to text.
+                        </p>
                     </div>
                 </div>
                 <div>
-                    <p style="font-family: 'Ndot 55';margin-top: 8px;"><strong>Chess Playing AI</strong></p>
+                    <p style="font-family: 'Ndot 55';margin-top: 8px;"><strong>SignLink</strong></p>
                 </div>
             </div>
             <div class="col-lg-6">
                 <div class="card cards" style="border-style: none;">
-                    <img class="card-img w-100 d-block card_image" src="assets/img/Group%204%20(1).png" style="border-style: none;" />
-                    <div class="card-img-overlay" style="border-style: none;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-arrow-up-right" style="font-size: 22px;">
+                    <img class="card-img w-100 d-block card_image" src="https://img.freepik.com/free-photo/marketing-strategy-connting-digital-devices-concept_53876-23053.jpg?w=1380&t=st=1691755410~exp=1691756010~hmac=f95146879071ab43cc5e0f6ed3ebc94897cc01c0a8d28eb289c5a51d14afeb30" style="border-style: none; object-fit: cover" />
+                    <div class="card-img-overlay" style="border-style: none; background-color: transparent; backdrop-filter: blur(10px); background-color: rgba(0, 0, 0, 0.5); border-radius: 15px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="white" viewBox="0 0 16 16" class="bi bi-arrow-up-right" style="font-size: 22px;">
                             <path fill-rule="evenodd" d="M14 2.5a.5.5 0 0 0-.5-.5h-6a.5.5 0 0 0 0 1h4.793L2.146 13.146a.5.5 0 0 0 .708.708L13 3.707V8.5a.5.5 0 0 0 1 0v-6z"></path>
                         </svg>
                     </div>
@@ -289,9 +618,9 @@
 
             <div class="col-lg-6">
                 <div class="card cards" style="border-style: none;">
-                    <img class="card-img w-100 d-block card_image" src="assets/img/_814d1e3b-b3bb-477e-b7bc-ce0f453e949a.jpeg" style="border-style: none;" />
-                    <div class="card-img-overlay" style="border-style: none;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-arrow-up-right" style="font-size: 22px;">
+                    <img class="card-img w-100 d-block card_image" src="https://img.freepik.com/free-photo/top-view-piggy-bank-with-person-holding-bitcoin_23-2148793726.jpg?w=1380&t=st=1691755162~exp=1691755762~hmac=83d00145b9b7c5e11aa890fef4c23b4f2e36d09d53c85dcac61457a556df67b4" style="border-style: none;" />
+                    <div class="card-img-overlay" style="border-style: none; background-color: transparent; backdrop-filter: blur(10px); background-color: rgba(0, 0, 0, 0.5); border-radius: 15px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="white" viewBox="0 0 16 16" class="bi bi-arrow-up-right" style="font-size: 22px;">
                             <path fill-rule="evenodd" d="M14 2.5a.5.5 0 0 0-.5-.5h-6a.5.5 0 0 0 0 1h4.793L2.146 13.146a.5.5 0 0 0 .708.708L13 3.707V8.5a.5.5 0 0 0 1 0v-6z"></path>
                         </svg>
                     </div>
@@ -303,9 +632,9 @@
 
             <div class="col-lg-6">
                 <div class="card cards" style="border-style: none;">
-                    <img class="card-img w-100 d-block card_image" src="assets/img/_b23654d2-5d1c-4de0-8472-4566def06993.jpeg" style="border-style: none;">
-                    <div class="card-img-overlay" style="border-style: none;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-arrow-up-right" data-bss-hover-animate="bounce" style="font-size: 22px;">
+                    <img class="card-img w-100 d-block card_image" src="https://img.freepik.com/free-photo/creative-illustrator-working-devices_23-2149863270.jpg?w=1380&t=st=1691755636~exp=1691756236~hmac=ce50e8e207a334fc7bda91aa0014f7cd62e868967e09625b7113ab43ccd16940" style="border-style: none;">
+                    <div class="card-img-overlay" style="border-style: none; background-color: transparent; backdrop-filter: blur(10px); background-color: rgba(0, 0, 0, 0.5); border-radius: 15px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="white" viewBox="0 0 16 16" class="bi bi-arrow-up-right" data-bss-hover-animate="bounce" style="font-size: 22px;">
                             <path fill-rule="evenodd" d="M14 2.5a.5.5 0 0 0-.5-.5h-6a.5.5 0 0 0 0 1h4.793L2.146 13.146a.5.5 0 0 0 .708.708L13 3.707V8.5a.5.5 0 0 0 1 0v-6z"></path>
                         </svg>
                     </div>
@@ -346,16 +675,24 @@
             </ul>
             <ul class="list-inline">
                 <li class="list-inline-item me-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                        <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                    </svg>
                 </li>
                 <li class="list-inline-item me-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 .02c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm6.99 6.98l-6.99 5.666-6.991-5.666h13.981zm.01 10h-14v-8.505l7 5.673 7-5.672v8.504z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                        <path d="M12 .02c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm6.99 6.98l-6.99 5.666-6.991-5.666h13.981zm.01 10h-14v-8.505l7 5.673 7-5.672v8.504z"/>
+                    </svg>
                 </li>
                 <li class="list-inline-item me-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
                 </li>
                 <li class="list-inline-item">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-2 16h-2v-6h2v6zm-1-6.891c-.607 0-1.1-.496-1.1-1.109 0-.612.492-1.109 1.1-1.109s1.1.497 1.1 1.109c0 .613-.493 1.109-1.1 1.109zm8 6.891h-1.998v-2.861c0-1.881-2.002-1.722-2.002 0v2.861h-2v-6h2v1.093c.872-1.616 4-1.736 4 1.548v3.359z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                        <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-2 16h-2v-6h2v6zm-1-6.891c-.607 0-1.1-.496-1.1-1.109 0-.612.492-1.109 1.1-1.109s1.1.497 1.1 1.109c0 .613-.493 1.109-1.1 1.109zm8 6.891h-1.998v-2.861c0-1.881-2.002-1.722-2.002 0v2.861h-2v-6h2v1.093c.872-1.616 4-1.736 4 1.548v3.359z" />
+                    </svg>
                 </li>
             </ul>
             <p class="mb-0" style="font-family: 'Ndot 55';">Copyright © 2023</p>
@@ -366,5 +703,4 @@
     <script src="assets/js/Animated-Type-Heading-BS5-Animated-Type-Heading.js"></script>
     <script src="assets/js/Fixed-navbar-starting-with-transparency-script.js"></script>
 </body>
-
 </html>
