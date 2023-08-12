@@ -205,6 +205,15 @@
 
         let isDarkMode = localStorage.getItem("darkMode") === 'true';
 
+        document.addEventListener("DOMContentLoaded", function() {
+            if (isDarkMode) {
+                applyDarkStyles();
+            } else {
+                removeDarkStyles();
+            }
+        });
+        
+
         function toggleDarkMode() {
             const body = document.body;
             isDarkMode = !isDarkMode;
@@ -273,7 +282,8 @@
 
             const nextJS = document.getElementById("nextJS")
             nextJS.style.filter = "invert(1)";
-            // localStorage.setItem("darkMode", true);
+
+            localStorage.setItem("darkMode", "true");
         }
 
         function removeDarkStyles() {
@@ -303,12 +313,7 @@
             timelineLabels.forEach(function(label) {
                 label.classList.remove('black-border');
             });
-        }
-
-        if (isDarkMode) {
-            applyDarkStyles();
-        } else {
-            removeDarkStyles();
+            localStorage.setItem("darkMode", "false");
         }
     </script>
 </head>
